@@ -24,7 +24,7 @@ def find_peer(name, nrows=0, table=0):
 
 
 # 训练模型并保存
-def train(hy, x, y):
+def trainMaxValue(hy, x, y):
     # 添加一层神经网络，输入的参数是一维向量
     model = keras.Sequential([keras.layers.Dense(units=1, input_shape=[1])])
     # 为模型添加sgd优化器 损失函数为均方误差
@@ -38,7 +38,7 @@ def train(hy, x, y):
     model.summary()
     # 保存模型
     ind = '%d' %hy
-    name = ind + 'model.h5'
+    name = ind + 'MaxValue.h5'
     model.save(name)
 
 
@@ -55,7 +55,7 @@ def excel_table_byname(file=u'stock.xlsx', by_name=u'Sheet1'):  # 修改自己�
     table = data.sheet_by_name(by_name)  # 获得表格
     nrows = table.nrows  # 拿到总共行数
 
-    for hy in range(1, 11):
+    for hy in range(1, 14):
         # 1. 取出每个行业的样本
         wind1 = find_peer(hy, nrows, table)
         # 2. 取出该行业的每股收益-自变量
@@ -63,7 +63,7 @@ def excel_table_byname(file=u'stock.xlsx', by_name=u'Sheet1'):  # 修改自己�
         # 3. 取出该行业的每股价格-因变量
         y = forfunc(wind1, 2)
         # 4. 训练模型
-        train(hy, x, y)
+        trainMaxValue(hy, x, y)
 
 
 def main():
