@@ -54,9 +54,9 @@ def excel_table_byname(file=u'stock.xlsx', by_name=u'Sheet1'):  # 修改自己�
     data = open_excel(file)
     table = data.sheet_by_name(by_name)  # 获得表格
     # nrows = table.nrows  # 拿到总共行数
-    nrows = 21  # 拿到总共行数
+    nrows = 24  # 拿到总共行数
 
-    for hy in range(1, 11):
+    for hy in range(1, 13):
         # 1. 取出每个行业的样本
         wind1 = find_peer(hy, nrows, table)
         # 2. 取出该行业的每股收益-自变量
