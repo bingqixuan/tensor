@@ -23,7 +23,7 @@ def find_peer(name, nrows=0, table=0):
     return array
 
 
-# 训练模型并保存
+# 训练最大值模型并保存
 def trainMaxValue(hy, x, y):
     # 添加一层神经网络，输入的参数是一维向量
     model = keras.Sequential([keras.layers.Dense(units=1, input_shape=[1])])
@@ -42,6 +42,26 @@ def trainMaxValue(hy, x, y):
     model.save(name)
 
 
+# 训练最大值模型并保存
+def trainKLowValue(hy, x1, x2, y):
+    # 添加一层神经网络，输入的参数是一维向量
+    model = keras.Sequential([keras.layers.Dense(units=1, input_shape=[1])])
+    # 为模型添加sgd优化器 损失函数为均方误差
+    model.compile(optimizer='sgd', loss='mse')
+    # 输入的数据及正确的数据
+    xs1 = np.array(x1, dtype=float)
+    xs2 = np.array(x2, dtype=float)
+    ys1 = np.array(y, dtype=float)
+    # 训练模型50轮
+    model.fit([xs1, xs2], ys1, epochs=50)
+    # 输出模型详细信息
+    model.summary()
+    # 保存模型
+    ind = '%d' %hy
+    name = ind + 'KLowValue.h5'
+    model.save(name)
+
+
 # 循环遍历取结果
 def forfunc(data, index):
     array = []
@@ -54,17 +74,22 @@ def excel_table_byname(file=u'stock.xlsx', by_name=u'Sheet1'):  # 修改自己�
     data = open_excel(file)
     table = data.sheet_by_name(by_name)  # 获得表格
     # nrows = table.nrows  # 拿到总共行数
-    nrows = 24  # 拿到总共行数
+    nrows = 18  # 拿到总共行数
 
     for hy in range(1, 13):
         # 1. 取出每个行业的样本
         wind1 = find_peer(hy, nrows, table)
-        # 2. 取出该行业的每股收益-自变量
-        x = forfunc(wind1, 6)
-        # 3. 取出该行业的每股价格-因变量
-        y = forfunc(wind1, 2)
-        # 4. 训练模型
-        trainMaxValue(hy, x, y)
+        if len(wind1) == 0:
+            continue
+        # 取出该行业的每股收益
+        ps = forfunc(wind1, 6)
+        # 取出该行业的每股最高价格
+        pv = forfunc(wind1, 2)
+        # 取出该行业的开板最低值
+        pl = forfunc(wind1, 9)
+        # 训练模型
+        # trainMaxValue(hy, ps, pv)
+        trainKLowValue(hy, ps, pv, pl)
 
 
 def main():
