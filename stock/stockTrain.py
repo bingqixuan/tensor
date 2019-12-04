@@ -42,18 +42,19 @@ def trainMaxValue(hy, x, y):
     model.save(name)
 
 
-# 训练最大值模型并保存
+# 训练开板最低值模型并保存
 def trainKLowValue(hy, x1, x2, y):
     # 添加一层神经网络，输入的参数是一维向量
-    model = keras.Sequential([keras.layers.Dense(units=1, input_shape=[1])])
+    model = keras.Sequential([keras.layers.Dense(units=1, input_shape=[2])])
     # 为模型添加sgd优化器 损失函数为均方误差
     model.compile(optimizer='sgd', loss='mse')
     # 输入的数据及正确的数据
     xs1 = np.array(x1, dtype=float)
     xs2 = np.array(x2, dtype=float)
     ys1 = np.array(y, dtype=float)
+    x = np.array([x1, x2], dtype=float).T
     # 训练模型50轮
-    model.fit([xs1, xs2], ys1, epochs=50)
+    model.fit(x, ys1, epochs=5)
     # 输出模型详细信息
     model.summary()
     # 保存模型
@@ -88,8 +89,8 @@ def excel_table_byname(file=u'stock.xlsx', by_name=u'Sheet1'):  # 修改自己�
         # 取出该行业的开板最低值
         pl = forfunc(wind1, 9)
         # 训练模型
-        # trainMaxValue(hy, ps, pv)
-        trainKLowValue(hy, ps, pv, pl)
+        trainMaxValue(hy, ps, pv)
+        # trainKLowValue(hy, ps, pv, pl)
 
 
 def main():
